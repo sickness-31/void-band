@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<!--
+  ====================================================================
+  VO!D — Official Website
+  index.html
+  
+  HOW THIS FILE IS ORGANIZED:
+  1. <head>      — invisible setup: fonts, page title, styles
+  2. <style>     — all the visual design (colors, sizes, spacing)
+  3. <body>      — everything the visitor actually sees
+  4. <script>    — the glitch animation on the hero name
+  
+  TO UPDATE CONTENT: search for "CHANGE:" comments throughout the file.
+  They mark every piece of text, link, or image you'll want to edit.
+  
+  TO UPDATE STYLES: search for the CSS variable names at the top of
+  the <style> block. Colors, fonts, and sizes are all set there.
+  ====================================================================
+-->
+<html lang="en">
+<head>
+
+  <!-- tells the browser this file uses UTF-8 characters (handles 
+       special characters like é, ö, etc. safely) -->
+  <meta charset="UTF-8">
+
+  <!-- makes the site scale correctly on phones and tablets -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- CHANGE: this text appears in the browser tab -->
+  <title>VO!D — Calgary Metal</title>
+
+  <!-- 
+    META TAGS — these control how the site looks when shared on 
+    social media (Discord, Facebook, iMessage link previews, etc.)
+    CHANGE: update these when you have a proper description and image
+  -->
+  <meta name="description" content="VO!D — metal from Calgary, Alberta. Born of the universe, we come from nothing.">
+  <meta property="og:title" content="VO!D">
+  <meta property="og:description" content="Born of the universe, we come from nothing.">
+  <!-- CHANGE: replace with a real preview image path when you have one -->
+  <meta property="og:image" content="assets/images/release-residual.jpg">
+
+  <!-- 
+    GOOGLE FONTS — loads two typefaces from Google's free font library.
+    Bebas Neue: tall, condensed, all-caps display font (headers)
+    Space Mono: fixed-width typewriter font (body text)
+    These load from the internet — if you ever want to self-host them,
+    download the files and replace these links with local paths.
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    /*
+    ================================================================
+    CSS — CASCADING STYLE SHEETS
+    This block controls everything visual: colors, sizes, spacing,
+    fonts, layout. It doesn't DO anything, it just DESCRIBES how
+    things look.
+
+    Syntax: selector { property: value; }
+    Example: body { background: black; } means "make the page background black"
+    ================================================================
+    */
+
+    /* 
+      CSS VARIABLES — think of these like constants in C#.
+      Define a value once here, use it everywhere below.
+      To change the site's color scheme, edit these values.
+      Format: --variable-name: value;
+      Usage:  color: var(--blood);
+    */
+    :root {
+      --black:    #0A0A0A;  /* near-black background — slightly warm, not pure */
+      --dirty:    #E8E0D0;  /* off-white text — aged paper feel, not harsh white */
+      --blood:    #8B0000;  /* dark blood red — used sparingly as the accent */
+      --dark:     #1A1A1A;  /* secondary dark for cards and section backgrounds */
+      --mid:      #4A4A4A;  /* mid-grey for secondary text and borders */
+      --dim:      #2A2A2A;  /* very dark grey for subtle backgrounds */
+
+      /* font families stored as variables for easy swapping */
+      --display:  'Bebas Neue', sans-serif;   /* headers, labels, nav */
+      --body:     'Space Mono', monospace;    /* paragraphs, descriptions */
+    }
+
+    /* 
+      RESET — browsers add their own default padding/margin to elements.
+      This removes all of that so we start from zero and control everything.
+      * means "apply to every element on the page"
+    */
+    *, *::before, *::after {
+      box-sizing: border-box; /* makes sizing predictable — padding included in width */
+      margin: 0;
+      padding: 0;
+    }
+
+    /* BASE PAGE STYLES */
+    html {
+      scroll-behavior: auto; /* no smooth scroll — keeps it raw */
+    }
+
+    body {
+      background: var(--black);
+      color: var(--dirty);          /* default text color for the whole page */
+      font-family: var(--body);
+      font-size: 13px;
+      line-height: 1.7;             /* space between lines of text */
+      overflow-x: hidden;           /* prevents horizontal scrollbar */
+    }
+
+    /* 
+      THE HORIZONTAL RULE — the single blood-red line between sections.
+      <hr> is an HTML element that draws a horizontal line.
+      We're overriding its default look completely.
+    */
+    .rule {
+      border: none;
+      border-top: 1px solid var(--blood); /* 1px line, blood red */
+      margin: 0;
+    }
+
+    /*
+    ================================================================
+    NAVIGATION — fixed bar at the top of the page
+    position: fixed means it stays visible as you scroll
+    ================================================================
+    */
+    #nav {
+      position: fixed;              /* stays at top even when scrolling */
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;                 /* sits above everything else on the page */
+      padding: 1.25rem 6vw;         /* 6vw = 6% of viewport width — scales with screen */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(10,10,10,0.92); /* slightly transparent black */
+      backdrop-filter: blur(8px);      /* blurs content behind the nav */
+      border-bottom: 1px solid var(--dim);
+    }
+
+    .nav-logo {
+      font-family: var(--display);
+      font-size: 22px;
+      color: var(--dirty);
+      text-decoration: none;        /* removes underline from links */
+      letter-spacing: 0.1em;        /* space between letters */
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;                  /* space between each nav item */
+      list-style: none;             /* removes bullet points from the list */
+    }
+
+    .nav-links a {
+      font-family: var(--display);
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      color: var(--mid);
+      text-decoration: none;
+      transition: color 0.15s;      /* smooth color change on hover (0.15 seconds) */
+    }
+
+    /* :hover applies styles when the mouse is over an element */
+    .nav-links a:hover {
+      color: var(--dirty);
+    }
+
+    /*
+    ================================================================
+    HERO — the first full-screen section the visitor sees
+    ================================================================
+    */
+    #hero {
+      min-height: 100vh;            /* 100vh = 100% of the visible screen height */
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;    /* pushes content to the bottom */
+      padding: 0 6vw 8rem;
+      position: relative;
+      overflow: hidden;             /* clips the logo image to this section */
+    }
+
+    /* 
+      HERO BACKGROUND — the shrapnel logo sits behind the text.
+      position: absolute takes it out of normal flow and lets us
+      layer it behind the text content.
+    */
+    .hero-bg {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: url('assets/images/logo-hero.png');
+      background-size: 70%;             /* logo takes up 70% of the hero width */
+      background-position: center 40%;  /* horizontal center, 40% down */
+      background-repeat: no-repeat;
+      opacity: 0.07;                    /* very faint — 0=invisible, 1=solid */
+      /* increase this number to make the logo more visible in the background */
+    }
+
+    /* dark gradient that fades from transparent at top to black at bottom */
+    .hero-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(
+        to bottom,
+        transparent 30%,        /* top 30% is see-through */
+        var(--black) 100%       /* fades to solid black at the bottom */
+      );
+    }
+
+    /* z-index controls layering — higher number = in front */
+    .hero-content {
+      position: relative;
+      z-index: 2;               /* sits above the background and overlay */
+    }
+
+    .hero-eyebrow {
+      font-family: var(--display);
+      font-size: 12px;
+      letter-spacing: 0.5em;
+      color: var(--blood);
+      margin-bottom: 1rem;
+    }
+
+    /* 
+      THE BIG VO!D TITLE
+      clamp(min, preferred, max) — scales the font between a min and max
+      based on screen width. clamp(80px, 18vw, 260px) means:
+      never smaller than 80px, never bigger than 260px, tries for 18vw
+    */
+    .hero-name {
+      font-family: var(--display);
+      font-size: clamp(80px, 18vw, 260px);
+      line-height: 0.85;
+      color: var(--dirty);
+      margin-bottom: 2rem;
+      user-select: none;            /* prevents text selection on drag */
+    }
+
+    /* 
+      Each letter of VO!D is wrapped in a <span> for the glitch animation.
+      They start invisible (opacity: 0) and the JS reveals them one by one.
+    */
+    .hero-name span {
+      display: inline-block;
+      opacity: 0;
+      transition: opacity 0.05s;
+    }
+
+    .hero-name span.resolved {
+      opacity: 1;
+    }
+
+    .hero-tagline {
+      font-family: var(--body);
+      font-size: clamp(11px, 1.2vw, 13px);
+      color: var(--mid);
+      font-style: italic;
+      letter-spacing: 0.05em;
+    }
+
+    /*
+    ================================================================
+    PHOTO DIVIDER — full-width atmospheric image between sections
+    ================================================================
+    */
+    .photo-divider {
+      width: 100%;
+      height: 60vh;                 /* 60% of the screen height */
+      position: relative;
+      overflow: hidden;
+    }
+
+    .photo-divider img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;            /* fills the space, crops if needed */
+      object-position: center;
+      opacity: 0.4;                 /* dim the photo — increase for brighter */
+      filter: grayscale(60%);       /* partially desaturated — 100% = full B&W */
+    }
+
+    /* gradient overlay on the photo so it fades into the sections above/below */
+    .photo-divider::before,
+    .photo-divider::after {
+      content: '';                  /* required for pseudo-elements */
+      position: absolute;
+      left: 0; right: 0;
+      height: 40%;
+      z-index: 1;
+    }
+
+    .photo-divider::before {
+      top: 0;
+      background: linear-gradient(to bottom, var(--black), transparent);
+    }
+
+    .photo-divider::after {
+      bottom: 0;
+      background: linear-gradient(to top, var(--black), transparent);
+    }
+
+    /*
+    ================================================================
+    SECTIONS — base styles shared by all content sections
+    ================================================================
+    */
+    section {
+      padding: 7rem 6vw;            /* 7rem top/bottom, 6vw left/right */
+    }
+
+    /* small red label above section titles — like "DISCOGRAPHY" above "Music" */
+    .section-label {
+      font-family: var(--display);
+      font-size: 11px;
+      letter-spacing: 0.6em;
+      color: var(--blood);
+      margin-bottom: 2rem;
+      display: block;               /* block makes it sit on its own line */
+    }
+
+    /* large section heading */
+    .section-title {
+      font-family: var(--display);
+      font-size: clamp(48px, 7vw, 100px);
+      line-height: 0.9;
+      color: var(--dirty);
+      margin-bottom: 3rem;
+      letter-spacing: 0.02em;
+    }
+
+    /*
+    ================================================================
+    MUSIC SECTION
+    ================================================================
+    */
+    .release-block {
+      display: grid;
+      /* auto-fit fills the row with as many columns as fit at 280px min */
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .release-info {}
+
+    .release-meta {
+      font-family: var(--display);
+      font-size: 11px;
+      letter-spacing: 0.4em;
+      color: var(--blood);
+      margin-bottom: 1rem;
+    }
+
+    .release-title {
+      font-family: var(--display);
+      font-size: clamp(36px, 5vw, 64px);
+      color: var(--dirty);
+      line-height: 0.9;
+      margin-bottom: 1rem;
+      letter-spacing: 0.03em;
+    }
+
+    .release-description {
+      font-size: 12px;
+      color: var(--mid);
+      line-height: 1.9;
+      font-style: italic;
+      margin-bottom: 2rem;
+      max-width: 420px;
+    }
+
+    /* secondary streaming link below the Spotify embed */
+    .stream-also {
+      font-family: var(--display);
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: var(--mid);
+      text-decoration: none;
+      border-bottom: 1px solid var(--mid);
+      padding-bottom: 2px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .stream-also:hover {
+      color: var(--dirty);
+      border-color: var(--dirty);
+    }
+
+    /* wrapper for the Spotify embed iframe */
+    .spotify-embed {
+      border-radius: 0;             /* keep it square to match the aesthetic */
+    }
+
+    /* 
+      IFRAME — an inline frame that embeds another website.
+      Spotify's embed player lives inside this.
+      border: none removes the default iframe border.
+    */
+    .spotify-embed iframe {
+      border: none;
+      width: 100%;
+    }
+
+    /*
+    ================================================================
+    LIVE SECTION
+    ================================================================
+    */
+    .show-list {
+      border-top: 1px solid var(--dim);
+    }
+
+    /* 
+      Each show is a row with three columns: date | info | ticket link
+      grid-template-columns defines the column widths
+    */
+    .show-row {
+      display: grid;
+      grid-template-columns: 130px 1fr auto;
+      gap: 2rem;
+      align-items: center;
+      padding: 1.75rem 0;
+      border-bottom: 1px solid var(--dim);
+      transition: padding-left 0.1s;
+    }
+
+    .show-row:hover {
+      padding-left: 0.75rem;        /* slides right slightly on hover */
+    }
+
+    .show-date {
+      font-family: var(--display);
+      font-size: 20px;
+      color: var(--dirty);
+      letter-spacing: 0.05em;
+    }
+
+    .show-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .show-venue {
+      font-family: var(--display);
+      font-size: 18px;
+      color: var(--dirty);
+      letter-spacing: 0.05em;
+    }
+
+    .show-location {
+      font-size: 11px;
+      color: var(--mid);
+      font-style: italic;
+    }
+
+    .show-ticket {
+      font-family: var(--display);
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: var(--blood);
+      text-decoration: none;
+      border: 1px solid var(--blood);
+      padding: 0.5rem 1.25rem;
+      white-space: nowrap;          /* prevents the word "Tickets" from wrapping */
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .show-ticket:hover {
+      background: var(--blood);
+      color: var(--dirty);
+    }
+
+    /* shown when there are no upcoming dates */
+    .no-shows {
+      padding: 3rem 0;
+      color: var(--mid);
+      font-style: italic;
+      font-size: 12px;
+    }
+
+    /*
+    ================================================================
+    ABOUT SECTION
+    ================================================================
+    */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;  /* two equal columns */
+      gap: 6rem;
+      margin-top: 1rem;
+    }
+
+    .about-photos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;                     /* 2px gap creates the grid line effect */
+    }
+
+    /* 
+      The photo containers — overflow:hidden clips images to their box.
+      aspect-ratio keeps them square.
+    */
+    .about-photo {
+      overflow: hidden;
+      aspect-ratio: 1;              /* forces a perfect square */
+    }
+
+    .about-photo.wide {
+      grid-column: span 2;          /* this photo spans both columns */
+      aspect-ratio: 2 / 1;          /* wider ratio for the spanning photo */
+    }
+
+    .about-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(100%);      /* full black and white */
+      opacity: 0.75;
+      transition: opacity 0.3s, filter 0.3s;
+    }
+
+    /* on hover: brings back some color and increases brightness */
+    .about-photo:hover img {
+      opacity: 0.9;
+      filter: grayscale(60%);
+    }
+
+    .about-text {}
+
+    .about-bio p {
+      font-size: 13px;
+      line-height: 2;
+      color: var(--dirty);
+      opacity: 0.85;
+      margin-bottom: 1.5rem;
+    }
+
+    .about-bio p:first-child {
+      opacity: 1;                   /* first paragraph slightly brighter */
+    }
+
+    /* member list below the bio */
+    .member-list {
+      margin-top: 3rem;
+      border-top: 1px solid var(--dim);
+    }
+
+    .member-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;        /* aligns text along their baseline */
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--dim);
+    }
+
+    .member-name {
+      font-family: var(--display);
+      font-size: 22px;
+      color: var(--dirty);
+      letter-spacing: 0.05em;
+    }
+
+    .member-role {
+      font-size: 11px;
+      color: var(--mid);
+      font-style: italic;
+    }
+
+    /*
+    ================================================================
+    MERCH SECTION
+    ================================================================
+    */
+    .merch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 2px;
+      margin-top: 1rem;
+    }
+
+    .merch-card {
+      background: var(--dark);
+      padding: 2rem;
+      border-left: 2px solid transparent;
+      transition: border-color 0.15s;
+    }
+
+    .merch-card:hover {
+      border-left-color: var(--blood);
+    }
+
+    /* placeholder box where a product photo will go */
+    .merch-img {
+      width: 100%;
+      aspect-ratio: 1;
+      background: var(--dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--display);
+      font-size: 11px;
+      letter-spacing: 0.4em;
+      color: var(--mid);
+      margin-bottom: 1.25rem;
+      border: 1px solid #222;
+    }
+
+    .merch-title {
+      font-family: var(--display);
+      font-size: 20px;
+      color: var(--dirty);
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .merch-desc {
+      font-size: 11px;
+      color: var(--mid);
+      font-style: italic;
+      line-height: 1.7;
+      margin-bottom: 1rem;
+    }
+
+    .merch-price {
+      font-family: var(--display);
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      color: var(--blood);
+    }
+
+    .merch-cta {
+      margin-top: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .merch-store-link {
+      font-family: var(--display);
+      font-size: 13px;
+      letter-spacing: 0.3em;
+      color: var(--dirty);
+      text-decoration: none;
+      border: 1px solid var(--dirty);
+      padding: 1rem 2rem;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .merch-store-link:hover {
+      background: var(--dirty);
+      color: var(--black);
+    }
+
+    .merch-note {
+      font-size: 11px;
+      color: var(--mid);
+      font-style: italic;
+    }
+
+    /*
+    ================================================================
+    CONTACT SECTION
+    ================================================================
+    */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      margin-top: 1rem;
+    }
+
+    .contact-block {
+      margin-bottom: 2.5rem;
+    }
+
+    .contact-label {
+      font-family: var(--display);
+      font-size: 11px;
+      letter-spacing: 0.4em;
+      color: var(--blood);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .contact-value {
+      font-size: 13px;
+      color: var(--dirty);
+    }
+
+    .contact-value a {
+      color: var(--dirty);
+      text-decoration: none;
+      border-bottom: 1px solid var(--mid);
+      padding-bottom: 1px;
+      transition: border-color 0.15s;
+    }
+
+    .contact-value a:hover {
+      border-color: var(--dirty);
+    }
+
+    .contact-download {
+      color: var(--blood);
+      text-decoration: none;
+      border-bottom: 1px solid var(--blood);
+      padding-bottom: 1px;
+      font-family: var(--display);
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .contact-download:hover {
+      color: var(--dirty);
+      border-color: var(--dirty);
+    }
+
+    /* social platform links */
+    .social-links {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .social-link {
+      font-family: var(--display);
+      font-size: 16px;
+      letter-spacing: 0.15em;
+      color: var(--dirty);
+      text-decoration: none;
+      padding: 1.1rem 0;
+      border-bottom: 1px solid var(--dim);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: color 0.15s;
+    }
+
+    .social-link:hover {
+      color: var(--blood);
+    }
+
+    /* the ↗ arrow that appears on the right of each social link */
+    .social-link::after {
+      content: '↗';
+      font-size: 11px;
+      color: var(--mid);
+    }
+
+    /*
+    ================================================================
+    FOOTER
+    ================================================================
+    */
+    footer {
+      padding: 4rem 6vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--dim);
+    }
+
+    /* the footer logo image — small, dim, bottom-left */
+    .footer-logo img {
+      height: 48px;                 /* CHANGE: adjust height to taste */
+      opacity: 0.15;                /* very faint — increase to make more visible */
+      filter: invert(1);            /* inverts colors — makes black logo white */
+      transition: opacity 0.2s;
+    }
+
+    .footer-logo img:hover {
+      opacity: 0.35;
+    }
+
+    .footer-right {
+      text-align: right;
+    }
+
+    .footer-copy {
+      font-size: 10px;
+      color: var(--mid);
+      letter-spacing: 0.2em;
+      font-style: italic;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .footer-tagline {
+      font-family: var(--display);
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: var(--dim);
+    }
+
+    /*
+    ================================================================
+    RESPONSIVE — styles that only apply below certain screen widths.
+    @media is a CSS "if statement" — "if screen is narrower than 700px,
+    apply these styles instead"
+    ================================================================
+    */
+    @media (max-width: 900px) {
+      /* stack about grid to single column on tablets */
+      .about-grid {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+
+      /* reverse order so photos come first on mobile */
+      .about-photos {
+        order: -1;
+      }
+    }
+
+    @media (max-width: 700px) {
+      section {
+        padding: 5rem 5vw;
+      }
+
+      /* hide ticket link on mobile (small screens) */
+      .show-ticket {
+        display: none;
+      }
+
+      /* show rows become two columns instead of three */
+      .show-row {
+        grid-template-columns: 90px 1fr;
+      }
+
+      .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+
+      /* hide nav links on mobile — a hamburger menu would go here eventually */
+      .nav-links {
+        display: none;
+      }
+    }
+
+    /* 
+      ACCESSIBILITY — respects users who have "reduce motion" enabled
+      in their OS settings. Skips the glitch animation for them.
+    */
+    @media (prefers-reduced-motion: reduce) {
+      .hero-name span {
+        opacity: 1 !important;     /* !important overrides all other opacity rules */
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- ================================================
+       NAVIGATION
+       The bar that sticks to the top as you scroll.
+       To add a nav link: copy one <li> item and paste it,
+       change the href="#section-id" and the link text.
+       The href matches the id="" on each <section> below.
+       ================================================ -->
+  <nav id="nav">
+    <!-- CHANGE: clicking this takes you back to the top of the page -->
+    <a href="#hero" class="nav-logo">VO!D</a>
+    <ul class="nav-links">
+      <!-- each href="#music" scrolls to <section id="music"> below -->
+      <li><a href="#music">Music</a></li>
+      <li><a href="#live">Live</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#merch">Merch</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- ================================================
+       HERO — full screen opening section
+       The VO!D name glitches in on page load via JS below.
+       The background logo image is set in CSS (.hero-bg)
+       ================================================ -->
+  <section id="hero">
+
+    <!-- background shrapnel logo — opacity controlled in CSS above -->
+    <div class="hero-bg"></div>
+
+    <!-- gradient that fades the photo into the black background -->
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+
+      <!-- CHANGE: the small text above the band name -->
+      <p class="hero-eyebrow">Calgary, AB</p>
+
+      <!-- 
+        THE BAND NAME — each letter is in its own <span> so the 
+        glitch animation can reveal them one at a time.
+        aria-label="VO!D" tells screen readers the real text
+        since the spans might confuse them during animation.
+        DO NOT change the individual letters inside the spans
+        without also updating the realChars array in the JS below.
+      -->
+      <h1 class="hero-name" aria-label="VO!D">
+        <span data-char="V">V</span><span data-char="O">O</span><span data-char="!">!</span><span data-char="D">D</span>
+      </h1>
+
+      <!-- CHANGE: the tagline under the band name -->
+      <p class="hero-tagline">born of the universe, we come from nothing</p>
+
+    </div>
+  </section>
+
+  <!-- blood red line between every section -->
+  <hr class="rule">
+
+  <!-- ================================================
+       SILHOUETTE PHOTO DIVIDER
+       Full-width atmospheric image.
+       CHANGE: swap src= to use a different photo.
+       The image path is relative to index.html — 
+       assets/images/ means the images folder inside assets/
+       ================================================ -->
+  <div class="photo-divider">
+    <!-- CHANGE: replace with any photo from assets/images/ -->
+    <img src="assets/images/photo-silhouette.jpg" alt="VO!D">
+  </div>
+
+  <hr class="rule">
+
+  <!-- ================================================
+       MUSIC SECTION
+       ================================================ -->
+  <section id="music">
+    <span class="section-label">Discography</span>
+    <h2 class="section-title">Music</h2>
+
+    <div class="release-block">
+
+      <!-- LEFT COLUMN: release info -->
+      <div class="release-info">
+
+        <!-- CHANGE: update year, format, and title if you release more music -->
+        <p class="release-meta">2026 — EP</p>
+        <h3 class="release-title">Residual</h3>
+
+        <!-- CHANGE: update this description for each release -->
+        <p class="release-description">
+          VO!D's initial foothold into releasing further music.
+          A 15-minute wedge made specifically for the door into the metal scene.
+        </p>
+
+        <!-- 
+          CHANGE: update href= with the Apple Music link for each release.
+          The Spotify embed below handles Spotify — this is the Apple Music fallback.
+        -->
+        <a href="https://music.apple.com/us/artist/vo-d/1657633364"
+           target="_blank"
+           rel="noopener"
+           class="stream-also">
+          Also on Apple Music ↗
+        </a>
+
+      </div>
+
+      <!-- RIGHT COLUMN: Spotify embed player -->
+      <div class="spotify-embed">
+        <!--
+          SPOTIFY EMBED PLAYER
+          How to get this for a new release:
+          1. Open Spotify and find the album/EP/single
+          2. Click the three dots (...) next to the release
+          3. Share → Embed album/track
+          4. Copy the embed code Spotify gives you
+          5. Paste it here, replacing the entire <iframe> below
+
+          The current embed is for RESIDUAL.
+          CHANGE: replace the entire iframe with the new embed code.
+        -->
+        <iframe
+          style="border-radius:0px"
+          src="https://open.spotify.com/embed/artist/7Hr36pXqkd8HszkUkhOIgz?utm_source=generator&theme=0"
+          width="100%"
+          height="352"
+          frameBorder="0"
+          allowfullscreen=""
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy">
+        </iframe>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ================================================
+       LIVE SECTION — upcoming shows
+       
+       TO ADD A SHOW:
+       Copy everything between the "COPY FROM HERE" and 
+       "TO HERE" comments, paste it inside .show-list,
+       and update the date, venue, city, and ticket link.
+       
+       TO REMOVE A SHOW:
+       Delete the entire <div class="show-row">...</div> block.
+       
+       If there are no shows, delete the show rows and
+       uncomment the <p class="no-shows"> line instead.
+       ================================================ -->
+  <section id="live">
+    <span class="section-label">On the Road</span>
+    <h2 class="section-title">Live</h2>
+
+    <div class="show-list">
+
+      <!-- ===== COPY FROM HERE ===== -->
+      <div class="show-row">
+        <!-- CHANGE: date of the show -->
+        <span class="show-date">TBA</span>
+        <div class="show-info">
+          <!-- CHANGE: venue name -->
+          <span class="show-venue">Venue TBA</span>
+          <!-- CHANGE: city and province/state -->
+          <span class="show-location">Calgary, AB</span>
+        </div>
+        <!-- CHANGE: replace # with the actual ticket URL -->
+        <a href="#" class="show-ticket">Tickets</a>
+      </div>
+      <!-- ===== TO HERE ===== -->
+
+      <!-- 
+        NO SHOWS PLACEHOLDER — uncomment this (remove the /* and */)
+        and delete all the show rows above when there are no dates.
+        Then comment it back out when shows are added.
+      -->
+      <!--
+      <p class="no-shows">No upcoming dates. Check back soon.</p>
+      -->
+
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ================================================
+       ABOUT SECTION
+       ================================================ -->
+  <section id="about">
+    <span class="section-label">The Band</span>
+    <h2 class="section-title">About</h2>
+
+    <div class="about-grid">
+
+      <!-- LEFT: photo grid -->
+      <div class="about-photos">
+
+        <!-- 
+          PHOTO GRID — 2x2 with one wide photo spanning the top.
+          CHANGE: swap src= paths to use different photos.
+          All photos are in assets/images/
+        -->
+
+        <!-- wide photo spans both columns -->
+        <div class="about-photo wide">
+          <!-- CHANGE: main about photo — currently the full band live shot -->
+          <img src="assets/images/photo-live.jpg" alt="VO!D live">
+        </div>
+
+        <div class="about-photo">
+          <!-- CHANGE: second about photo -->
+          <img src="assets/images/photo-drums.jpg" alt="VO!D drums">
+        </div>
+
+        <div class="about-photo">
+          <!-- CHANGE: third about photo -->
+          <img src="assets/images/photo-guitar.jpg" alt="VO!D guitar">
+        </div>
+
+      </div>
+
+      <!-- RIGHT: bio text and member list -->
+      <div class="about-text">
+
+        <div class="about-bio">
+          <!--
+            BIO — your words, kept raw.
+            CHANGE: update these paragraphs as the band evolves.
+            Each <p> is a paragraph — add or remove as needed.
+          -->
+          <p>
+            Based in Calgary, Alberta, VO!D is a metal band taking influence
+            from all things heavy and groovy. After years of crafting a sound
+            that is uniquely theirs, they have recently begun to release music.
+          </p>
+          <p>
+            VO!D seeks to demonstrate uniquely energetic, raw and crushing riffs,
+            groovy forward-pushing drums, and loud, harsh vocals blended into
+            a wall of sound that moves you.
+          </p>
+          <p>
+            Certainly small and upcoming, VO!D's members are chomping at the bit
+            to be heard — and love to get a room moving.
+          </p>
+        </div>
+
+        <!-- 
+          MEMBER LIST
+          CHANGE: add or remove <div class="member-row"> blocks as lineup changes.
+          Format: Name on the left, role on the right.
+        -->
+        <div class="member-list">
+
+          <div class="member-row">
+            <!-- CHANGE: member name and role -->
+            <span class="member-name">Rowan Campbell</span>
+            <span class="member-role">Vocals</span>
+          </div>
+
+          <div class="member-row">
+            <span class="member-name">Kyle Kristjannson</span>
+            <span class="member-role">Guitar</span>
+          </div>
+
+          <div class="member-row">
+            <span class="member-name">Jordan Pearton</span>
+            <span class="member-role">Drums</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- second photo divider — guitar close-up -->
+  <div class="photo-divider">
+    <!-- CHANGE: swap for a different divider photo if desired -->
+    <img src="assets/images/photo-vocalist.jpg" alt="VO!D">
+  </div>
+
+  <hr class="rule">
+
+  <!-- ================================================
+       MERCH SECTION
+       
+       TO ADD A PRODUCT:
+       Copy one <div class="merch-card"> block and paste it
+       inside .merch-grid, then update title, description,
+       price, and replace the placeholder image div with
+       an <img> tag when you have product photos.
+
+       TO LINK TO YOUR ACTUAL STORE:
+       Update the href on .merch-store-link below.
+       ================================================ -->
+  <section id="merch">
+    <span class="section-label">Gear Up</span>
+    <h2 class="section-title">Merch</h2>
+
+    <div class="merch-grid">
+
+      <!-- MERCH CARD — copy this whole block to add a product -->
+      <div class="merch-card">
+        <!-- 
+          CHANGE: replace this placeholder div with an actual product image:
+          <img src="assets/images/merch-tee.jpg" alt="VO!D Logo Tee">
+          Once you have product photos, drop them in assets/images/
+        -->
+        <div class="merch-img">T-SHIRT</div>
+        <!-- CHANGE: product name -->
+        <p class="merch-title">VO!D Logo Tee</p>
+        <!-- CHANGE: short description -->
+        <p class="merch-desc">Black heavyweight tee — distressed logo front print.</p>
+        <!-- CHANGE: price or "Coming Soon" -->
+        <span class="merch-price">Coming Soon</span>
+      </div>
+
+      <div class="merch-card">
+        <div class="merch-img">HOODIE</div>
+        <p class="merch-title">Pullover Hoodie</p>
+        <p class="merch-desc">Black pullover — back print. Built for the pit.</p>
+        <span class="merch-price">Coming Soon</span>
+      </div>
+
+      <div class="merch-card">
+        <div class="merch-img">PATCH</div>
+        <p class="merch-title">Woven Patch</p>
+        <p class="merch-desc">Iron-on woven patch. 4" wide. Sew it. Burn it. Whatever.</p>
+        <span class="merch-price">Coming Soon</span>
+      </div>
+
+    </div>
+
+    <div class="merch-cta">
+      <!-- 
+        CHANGE: replace # with your actual store URL (Printful, Bandcamp, etc.)
+        when the store is live. Until then the # just keeps the link inactive.
+      -->
+      <a href="#" class="merch-store-link">Shop Full Store ↗</a>
+      <!-- CHANGE: update or remove this note based on your fulfillment setup -->
+      <p class="merch-note">Orders fulfilled by our print partner — ships worldwide.</p>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ================================================
+       CONTACT SECTION
+       ================================================ -->
+  <section id="contact">
+    <span class="section-label">Get In Touch</span>
+    <h2 class="section-title">Contact</h2>
+
+    <div class="contact-grid">
+
+      <!-- LEFT: email and press kit -->
+      <div>
+        <div class="contact-block">
+          <span class="contact-label">All Inquiries — Booking / Press / General</span>
+          <p class="contact-value">
+            <!-- CHANGE: update email address here -->
+            <a href="mailto:void.empr@gmail.com">void.empr@gmail.com</a>
+          </p>
+        </div>
+
+        <div class="contact-block">
+          <span class="contact-label">Press Kit</span>
+          <p class="contact-value">
+            <!-- 
+              CHANGE: replace # with the path to your EPK file once you have one.
+              If the file is in the repo: href="assets/void-epk.pdf"
+              If it's hosted elsewhere: href="https://link-to-your-epk.com"
+              The download attribute suggests the browser save it rather than open it.
+            -->
+            <a href="#" class="contact-download" download>Download EPK ↓</a>
+          </p>
+        </div>
+      </div>
+
+      <!-- RIGHT: social platform links -->
+      <div class="social-links">
+
+        <!--
+          SOCIAL LINKS
+          CHANGE: update the href= for each platform.
+          To remove a platform: delete the entire <a> line.
+          To add a platform: copy a line and update the href and text.
+          target="_blank" opens the link in a new tab.
+          rel="noopener" is a security best practice for external links.
+        -->
+
+        <!-- CHANGE: Instagram URL -->
+        <a href="https://www.instagram.com/void.yyc/"
+           target="_blank" rel="noopener"
+           class="social-link">Instagram</a>
+
+        <!-- CHANGE: TikTok URL -->
+        <a href="https://www.tiktok.com/@void.yyc"
+           target="_blank" rel="noopener"
+           class="social-link">TikTok</a>
+
+        <!-- CHANGE: Facebook URL -->
+        <a href="https://www.facebook.com/share/1GX7bonVd8/"
+           target="_blank" rel="noopener"
+           class="social-link">Facebook</a>
+
+        <!-- CHANGE: YouTube URL -->
+        <a href="https://www.youtube.com/@void_yyc"
+           target="_blank" rel="noopener"
+           class="social-link">YouTube</a>
+
+        <!-- CHANGE: Spotify URL -->
+        <a href="https://open.spotify.com/artist/7Hr36pXqkd8HszkUkhOIgz"
+           target="_blank" rel="noopener"
+           class="social-link">Spotify</a>
+
+        <!-- CHANGE: Apple Music URL -->
+        <a href="https://music.apple.com/us/artist/vo-d/1657633364"
+           target="_blank" rel="noopener"
+           class="social-link">Apple Music</a>
+
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ================================================
+       FOOTER
+       ================================================ -->
+  <footer>
+
+    <div class="footer-logo">
+      <!--
+        FOOTER LOGO IMAGE
+        CHANGE: swap src= to use a different logo variant.
+        filter: invert(1) in the CSS makes a black logo appear white —
+        so use the black-on-white version (voidalt_02) here.
+        If your logo is already white on black, remove filter: invert(1)
+        from the .footer-logo img rule in the CSS above.
+      -->
+      <img src="assets/images/logo-footer.png" alt="VO!D">
+    </div>
+
+    <div class="footer-right">
+      <!-- CHANGE: update year -->
+      <span class="footer-copy">© 2026 VO!D — Calgary, AB</span>
+      <span class="footer-tagline">born of the universe, we come from nothing</span>
+    </div>
+
+  </footer>
+
+  <!--
+  ================================================================
+  JAVASCRIPT — the glitch animation on the hero VO!D name
+  
+  JavaScript is the "behaviour" layer — it makes things happen.
+  Unlike HTML (structure) and CSS (appearance), JS runs logic.
+  
+  This script fires ONCE on page load, glitches each letter
+  through random characters, then resolves to the real letter.
+  It never repeats — the glitch is the hello, not a decoration.
+  ================================================================
+  -->
+  <script>
+
+    // A string of characters to randomly show during the glitch
+    // CHANGE: add or remove characters to change the glitch character set
+    const GLITCH_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*';
+
+    // The real letters that each span resolves to
+    // CHANGE: if you change the band name letters in HTML, update this array too
+    const realChars = ['V', 'O', '!', 'D'];
+
+    // querySelectorAll returns all elements matching the CSS selector
+    // '.hero-name span' means "all <span> elements inside .hero-name"
+    const spans = document.querySelectorAll('.hero-name span');
+
+    function glitchResolve() {
+      // forEach loops over each span — same concept as foreach in C#
+      spans.forEach((span, i) => {
+
+        let iterations = 0;
+
+        // More iterations = more glitch time before resolving.
+        // Each letter gets slightly more time than the previous one (i * 4)
+        const maxIterations = 8 + i * 4;
+
+        // setInterval fires a function repeatedly at a set interval (ms)
+        // Think of it like a coroutine that runs every 60ms
+        const interval = setInterval(() => {
+
+          if (iterations >= maxIterations) {
+            // Done glitching — set the real character and show it
+            span.textContent = realChars[i];
+            span.classList.add('resolved'); // adds the CSS class that sets opacity: 1
+            clearInterval(interval);        // stops the repeating timer
+          } else {
+            // Still glitching — show a random character
+            // Math.random() gives a number between 0 and 1
+            // Math.floor() rounds down to a whole number
+            span.textContent = GLITCH_CHARS[
+              Math.floor(Math.random() * GLITCH_CHARS.length)
+            ];
+            // Randomly vary opacity during glitch for flicker effect
+            span.style.opacity = Math.random() > 0.3 ? '1' : '0.2';
+            iterations++;
+          }
+
+        }, 60); // fires every 60 milliseconds
+
+        // setTimeout fires ONCE after a delay — staggers each letter's start
+        // Letter 0 starts at 0ms, letter 1 at 120ms, letter 2 at 240ms, etc.
+        setTimeout(() => {
+          span.style.opacity = '0.2'; // start visible but dim before glitching
+        }, i * 120);
+
+      });
+    }
+
+    // window.addEventListener listens for an event and fires a function when it happens
+    // 'load' fires when the page (including images) has fully loaded
+    window.addEventListener('load', () => {
+      // Short delay before starting — lets the page settle first
+      setTimeout(glitchResolve, 400);
+    });
+
+  </script>
+
+</body>
+</html>
