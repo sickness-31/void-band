@@ -35,9 +35,9 @@
     social media (Discord, Facebook, iMessage link previews, etc.)
     CHANGE: update these when you have a proper description and image
   -->
-  <meta name="description" content="VO!D — metal from Calgary, Alberta. Born of the universe, we come from nothing.">
+  <meta name="description" content="VO!D — nudeath from Calgary, Alberta. born of the universe, we come from nothing.">
   <meta property="og:title" content="VO!D">
-  <meta property="og:description" content="Born of the universe, we come from nothing.">
+  <meta property="og:description" content="born of the universe, we come from nothing.">
   <!-- CHANGE: replace with a real preview image path when you have one -->
   <meta property="og:image" content="assets/images/release-residual.jpg">
 
@@ -1356,82 +1356,63 @@
 
   </footer>
 
-  <!--
-  ================================================================
-  JAVASCRIPT — the glitch animation on the hero VO!D name
-  
-  JavaScript is the "behaviour" layer — it makes things happen.
-  Unlike HTML (structure) and CSS (appearance), JS runs logic.
-  
-  This script fires ONCE on page load, glitches each letter
-  through random characters, then resolves to the real letter.
-  It never repeats — the glitch is the hello, not a decoration.
-  ================================================================
-  -->
+  <!-- ================================================
+       JAVASCRIPT — glitch animation on the hero VO!D name
+       
+       CHANGES FROM PREVIOUS VERSION:
+       - Interval increased 60ms → 80ms (less frantic on fast machines)
+       - More iterations per letter (feels deliberate, not rushed)
+       - opacity forced to 1 before resolved class fires (no dim landings)
+       - Random iteration variation so letters feel independent
+       ================================================ -->
   <script>
 
-    // A string of characters to randomly show during the glitch
-    // CHANGE: add or remove characters to change the glitch character set
     const GLITCH_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*';
-
-    // The real letters that each span resolves to
-    // CHANGE: if you change the band name letters in HTML, update this array too
     const realChars = ['V', 'O', '!', 'D'];
-
-    // querySelectorAll returns all elements matching the CSS selector
-    // '.hero-name span' means "all <span> elements inside .hero-name"
     const spans = document.querySelectorAll('.hero-name span');
 
     function glitchResolve() {
-      // forEach loops over each span — same concept as foreach in C#
       spans.forEach((span, i) => {
 
         let iterations = 0;
 
-        // More iterations = more glitch time before resolving.
-        // Each letter gets slightly more time than the previous one (i * 4)
-        const maxIterations = 8 + i * 4;
+        // More iterations = longer glitch before resolving.
+        // Base of 12, each letter adds 5 more, plus random 0-4 extra
+        // so letters feel independent rather than mechanical
+        const maxIterations = 12 + (i * 5) + Math.floor(Math.random() * 4);
 
-        // setInterval fires a function repeatedly at a set interval (ms)
-        // Think of it like a coroutine that runs every 60ms
-        const interval = setInterval(() => {
-
-          if (iterations >= maxIterations) {
-            // Done glitching — set the real character and show it
-            span.textContent = realChars[i];
-            span.classList.add('resolved'); // adds the CSS class that sets opacity: 1
-            clearInterval(interval);        // stops the repeating timer
-          } else {
-            // Still glitching — show a random character
-            // Math.random() gives a number between 0 and 1
-            // Math.floor() rounds down to a whole number
-            span.textContent = GLITCH_CHARS[
-              Math.floor(Math.random() * GLITCH_CHARS.length)
-            ];
-            // Randomly vary opacity during glitch for flicker effect
-            span.style.opacity = Math.random() > 0.3 ? '1' : '0.2';
-            iterations++;
-          }
-
-        }, 60); // fires every 60 milliseconds
-
-        // setTimeout fires ONCE after a delay — staggers each letter's start
-        // Letter 0 starts at 0ms, letter 1 at 120ms, letter 2 at 240ms, etc.
+        // Start each letter dim before its interval begins
+        // Staggered so letters don't all start at the same time
         setTimeout(() => {
-          span.style.opacity = '0.2'; // start visible but dim before glitching
-        }, i * 120);
+          span.style.opacity = '0.2';
+
+          const interval = setInterval(() => {
+
+            if (iterations >= maxIterations) {
+              // Force opacity to 1 BEFORE adding resolved class
+              // prevents letters landing at low opacity mid-flicker
+              span.style.opacity = '1';
+              span.textContent = realChars[i];
+              span.classList.add('resolved');
+              clearInterval(interval);
+            } else {
+              span.textContent = GLITCH_CHARS[
+                Math.floor(Math.random() * GLITCH_CHARS.length)
+              ];
+              // Flicker opacity during glitch — but never as low as the start
+              span.style.opacity = Math.random() > 0.25 ? '0.9' : '0.4';
+              iterations++;
+            }
+
+          }, 80); // 80ms interval — less frantic than 60ms on fast machines
+
+        }, i * 150); // 150ms stagger between letters (was 120ms)
 
       });
     }
 
-    // window.addEventListener listens for an event and fires a function when it happens
-    // 'load' fires when the page (including images) has fully loaded
     window.addEventListener('load', () => {
-      // Short delay before starting — lets the page settle first
       setTimeout(glitchResolve, 400);
     });
 
   </script>
-
-</body>
-</html>
